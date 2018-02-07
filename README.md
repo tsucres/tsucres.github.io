@@ -1,5 +1,8 @@
 ## Portfolio
 
+[![screenshot](screenshot.png)](http://tsucres.me)
+
+
 This repo hosts my portfolio. It's a jekyll based static website accessible [here](http://www.tsucres.me).
 
 The design is inspired by the two following themes: 
@@ -51,4 +54,7 @@ jekyll serve
 
 
 
+## Host
+
+The website is hosted on github, on the `master` branch of this repo. The repo is organised according to the method described [here](https://drewsilcock.co.uk/custom-jekyll-plugins).
 
