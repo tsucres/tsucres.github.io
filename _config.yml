@@ -1,0 +1,58 @@
+title:            Stéphane Sercu
+description:      I'm a student at the Polytechnic School of Brussels, currently enrolled for a master degree in Computer Science and Engineering. On this website you'll find a short presentation of some of my projects.
+       
+github_username: tsucres
+linkedin_username: ssercu
+email: [sercu.stephane, gmail, com]
+
+future:      false  # publish future dated posts --  true, false (default) 
+highlighter: rouge
+markdown:    kramdown
+plugins:
+  - jekyll-sitemap
+  - jekyll-paginate
+  - jekyll_github_sample
+  
+sass:
+  sass_dir: _sass
+  style: compressed
+
+permalink: /:year-:month-:day/:title.html
+
+# Amount of post to show on home page
+paginate: 7
+
+#kramdown:
+#  input: GFM
+#  auto_ids: true
+#  footnote_nr: 1
+#  entity_output: as_char
+#  toc_levels: 1..6
+#  enable_coderay: false
+
+include: 
+  - .htaccess
+  
+exclude: 
+  - "*.less"
+  - "*.sublime-project"
+  - "*.sublime-workspace"
+  - .asset-cache
+  - .bundle
+  - .jekyll-assets-cache
+  - .sass-cache
+  - CHANGELOG
+  - Capfile
+  - Gemfile
+  - Gruntfile.js
+  - LICENSE
+  - README
+  - Rakefile
+  - config
+  - gulpfile.js
+  - lib
+  - log
+  - node_modules
+  - package.json
+  - spec
+  - tmp

@@ -1,0 +1,73 @@
+---
+layout: post-index
+---
+{% for post in paginator.posts %}
+<article>
+    {% if post.image.feature %}
+
+    <figure class="feature-image">
+        
+        {% if post.image.tinyimg %}
+            <a href="{{ site.url }}{{ post.url }}" rel="bookmark" title="{{ post.title }}" itemprop="url" class="progressive-bg-image">
+
+                {% include progressive-image.html alt=post.title img=post.image.feature tinyimg=post.image.tinyimg %}
+            </a>
+        {% else %}
+            <a href="{{ site.url }}{{ post.url }}" rel="bookmark" title="{{ post.title }}" itemprop="url">
+
+                <img src="{{ site.url }}/images/{{ post.image.feature }}" alt="{{ post.title }}">
+            </a>
+        {% endif %}
+
+    </figure>
+    <div class="entry-container zero-padding-top">
+    {% else %}
+    <div class="entry-container">
+    {% endif %}
+
+        <!-- POST TITLE -->
+        <header>
+            <h1 class="entry-title">
+                <a href="{{ site.url }}{{ post.url }}" rel="bookmark" title="{{ post.title }}" itemprop="url">{{ post.title }}</a>
+            </h1>
+        </header>
+
+        {% if post.description %}
+        <!-- POST CONTENT -->
+        <div class="entry-content">
+            {{ post.description }}
+        </div>
+        {% endif %}
+
+        
+        <!--- DIVIDING LINE -->
+        <hr>
+
+        <!-- POST TAGS -->
+        <div class="inline-tags">
+            <span>
+            {% for tag in post.tags %}
+                <a href="/tags/#{{tag}}">#{{ tag }}&nbsp;&nbsp;&nbsp;</a>
+            {% endfor %}
+            </span>
+        </div>
+        
+        
+        <!-- POST DATE -->
+        <div class="post-date">
+            <span class="entry-date date published updated">
+                <time datetime="{{ post.date | date_to_xmlschema }}">
+                    <a href="{{ site.url }}{{ post.url }}">{{ post.date | date: "%B %d, %Y" }}</a>
+                </time>
+            </span>
+        </div>
+    </div>
+    
+</article>
+{% endfor %}
+
+<div class="pagination">
+<center>
+{% include pagination.html %}
+</center>
+</div>

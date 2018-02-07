@@ -1,0 +1,159 @@
+@mixin font-rem($size) {
+  font-size: 0px + $size;
+  font-size: 0rem + $size / $doc-font-size;
+}
+
+.entry-header {
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+
+	
+}
+
+.external-links {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin: 0 auto;
+	max-width: 440px;
+	padding: 10px 15px;
+	background-color: rgba(34, 34, 34, 0.5);
+	text-align: right;
+	border-radius: 3px 0 0 0;
+	z-index: 10;
+
+	a {
+		color: #fff;
+		font-size: 12px;
+		font-size: .75rem;
+		display: inline-block;
+	}
+	a:hover {
+		color: #fff;
+	}
+	a:not(:first-child) {
+		margin-left: 10px;
+		padding-left: 10px;
+		border-left: 1px solid rgba(255, 255, 255, 0.5);
+	}
+
+	img {
+		margin-right: 10px;
+		width: 19px;
+		height: auto;
+		fill: white;
+	}
+}
+
+.external-links.alone { /* Without feature image */
+	bottom: auto;
+	border-radius: 0;
+	border-bottom-left-radius: 3px;
+}
+
+.feature-image .external-links a {
+	display: inline;
+}
+
+
+.header-title {
+	position: absolute;
+	top: 0;
+	display: table;
+	margin-top: 0;
+	width: 100%;
+	height: $feature-image-height;
+	overflow: hidden;
+
+	.header-title-wrap {
+		display: table-cell;
+		vertical-align: middle;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	h1 {
+		margin: 10px;
+		font-weight: 700;
+		@include font-rem(32);
+		margin: 10px 60px;
+		color: #fff;
+		text-shadow: 1px 1px 4px rgba($base-color,0.6);
+
+		a {
+			color: #fff;
+		}
+
+		@media #{$medium} {
+			@include font-rem(48);
+		}
+
+		@media #{$large} {
+			@include font-rem(60);
+		}
+	}
+
+	h2 {
+		margin: 0;
+		color: #fff;
+		@include font-rem(18);
+
+		@media #{$medium} {
+			@include font-rem(24);
+			a {
+				color: #fff;
+			}
+		}
+	}
+
+	p {
+		color: #fff;
+		margin: 15px auto;
+		padding: 0 25px;
+		a {
+			color: #fff;
+			text-decoration: underline;
+		}
+
+		@media #{$large} {
+			max-width: $column-width;
+		}
+	}
+
+}
+
+.entry-image {
+	position: relative;
+	top: -50%; 
+	left: -50%; 
+	width: 200%; 
+	height: 200%;
+	min-height: $feature-image-height;
+	overflow: hidden;
+	z-index: 0;
+	&:after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba($base-color,0.3);
+	}
+
+	img, .aspectRatioPlaceholder {
+		position: absolute; 
+		top: 0; 
+		left: 0; 
+		right: 0; 
+		bottom: 0; 
+		margin: auto; 
+		min-width: 50%;
+		min-height: $feature-image-height; // match .entry-image min-height
+	}
+
+	img {
+		object-fit: cover;
+	}
+}

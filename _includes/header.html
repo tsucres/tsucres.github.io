@@ -1,0 +1,43 @@
+<!-- HEADER IMAGE -->
+<div class="entry-header">
+    
+    <div class="entry-image progressive-bg-image" data-full-image-path="{{ site.url }}/images/header/background.png" data-miniature-path="{{ site.url }}/images/header/background_mini.png">
+      <noscript><img class="full-absolute object-fit-cover" src="{{ site.url }}/images/header/background.png"></noscript>
+    
+    </div><!-- /.entry-image -->
+  
+  <div class="header-title">
+    <div class="header-title-wrap">
+      <h1><a href="/">Stéphane Sercu</a></h1>
+      <h2>Passionate software engineer student</h2>
+      <p>Hi! I'm a student at the Polytechnic School of Brussels, currently enrolled for a master degree in Computer Science and Engineering. On this website you'll find a short presentation of some of my projects. <a href="/about">Learn more about me</a>.</p>
+    </div><!-- /.header-title-wrap -->
+  </div><!-- /.header-title -->
+
+  {% if site.github_username or site.linkedin_username %}
+  <div class="external-links">
+    {% if site.github_username %}
+      <a href="https://www.github.com/{{ site.github_username }}/"><img src="{{ site.url }}/images/github_logo.svg" onerror="this.onerror=null; this.src='{{ site.url }}/images/github_logo.png'">@{{ site.github_username }}</a>
+    {% endif %}
+    {% if site.linkedin_username %}
+      <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}/"><img src="{{ site.url }}/images/linkedin_logo.svg" onerror="this.onerror=null; this.src='{{ site.url }}/images/github_logo.png'">@{{ site.linkedin_username }}</a>
+    {% endif %}
+    {% if site.email %}
+      <a data-name="{{ site.email[0] }}" data-domain="{{ site.email[1] }}" data-tld="{{ site.email[2] }}" href="#" class="cryptedmail" onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld"><img src="{{ site.url }}/images/email_logo.svg" onerror="this.onerror=null; this.src='{{ site.url }}/images/email_logo.png'"></a>
+      
+    {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- NAVIGATION -->
+<br><br>
+<center>
+    <span class="navigation-bar">
+        <a href="/">HOME</a>
+        <a href="/projects">PROJECTS</a>
+        <a href="/archives/">ARCHIVE</a>
+        <a href="/tags/">TAGS</a>
+        <a href="/about/">ABOUT</a>
+    </span>
+</center> 

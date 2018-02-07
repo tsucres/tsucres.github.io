@@ -1,0 +1,19 @@
+---
+layout: post-index
+title: Projects
+---
+<article>
+    <div class="entry-container">
+        <h1 class="entry-title">
+            <a>{{ page.title }}</a>
+        </h1>
+        <p>The following are short descriptions of projects I'm still maintaing and/or working on.</p>
+        <hr>
+    </div>
+</article>
+
+
+{% for post in site.tags["LTS"] %}
+    {% include post-index-item.html post=post %}
+{% endfor %}
+
