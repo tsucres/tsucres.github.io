@@ -1,0 +1,629 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+   
+<head>
+  <meta charset="utf-8">
+<title>UnoDucky: a USB Rubber Ducky imitation using an Arduino Uno &#8211; Stéphane Sercu</title>
+<meta name="description" content="The aim of ths project was to build a USB Rubber Ducky using an Arduino Uno and the components present in the "Arduino Starter Kit". The main parts of this project are: 1) the arduino circuit 2) the arduino code (sketch) 3) The Ducky Script encoder, written in Python.">
+<meta name="keywords" content="Python, C, Arduino">
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/manifest.json">
+<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#3b8ad5">
+<link rel="shortcut icon" href="/icons/favicon.ico">
+<meta name="msapplication-config" content="/icons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UnoDucky: a USB Rubber Ducky imitation using an Arduino Uno">
+<meta property="og:description" content="The aim of ths project was to build a USB Rubber Ducky using an Arduino Uno and the components present in the "Arduino Starter Kit". The main parts of this project are: 1) the arduino circuit 2) the arduino code (sketch) 3) The Ducky Script encoder, written in Python.">
+<meta property="og:url" content="/2017-03-02/UnoDucky.html">
+<meta property="og:site_name" content="Stéphane Sercu">
+
+
+
+
+
+<link rel="canonical" href="/2017-03-02/UnoDucky.html">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/bluepil.min.css">
+<link href="//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic" rel="stylesheet" type="text/css">
+
+
+</head>
+<body>
+	
+      <!-- HEADER IMAGE -->
+<div class="entry-header">
+    
+    <div class="entry-image progressive-bg-image" data-full-image-path="/images/header/background.png" data-miniature-path="/images/header/background_mini.png">
+      <noscript><img class="full-absolute object-fit-cover" src="/images/header/background.png"></noscript>
+    
+    </div><!-- /.entry-image -->
+  
+  <div class="header-title">
+    <div class="header-title-wrap">
+      <h1><a href="/">Stéphane Sercu</a></h1>
+      <h2>Passionate software engineer student</h2>
+      <p>Hi! I'm a student at the Polytechnic School of Brussels, currently enrolled for a master degree in Computer Science and Engineering. On this website you'll find a short presentation of some of my projects. <a href="/about">Learn more about me</a>.</p>
+    </div><!-- /.header-title-wrap -->
+  </div><!-- /.header-title -->
+
+  
+  <div class="external-links">
+    
+      <a href="https://www.github.com/tsucres/"><img src="/images/github_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'">@tsucres</a>
+    
+    
+      <a href="https://www.linkedin.com/in/ssercu/"><img src="/images/linkedin_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'">@ssercu</a>
+    
+    
+      <a data-name="sercu.stephane" data-domain="gmail" data-tld="com" href="#" class="cryptedmail" onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld"><img src="/images/email_logo.svg" onerror="this.onerror=null; this.src='/images/email_logo.png'"></a>
+      
+    
+    </div>
+  
+</div>
+
+<!-- NAVIGATION -->
+<br><br>
+<center>
+    <span class="navigation-bar">
+        <a href="/">HOME</a>
+        <a href="/projects">PROJECTS</a>
+        <a href="/archives/">ARCHIVE</a>
+        <a href="/tags/">TAGS</a>
+        <a href="/about/">ABOUT</a>
+    </span>
+</center> 
+    <!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+    
+    <div id="main" role="main">
+        <article class="hentry">
+            
+                
+                
+
+                <figure class="feature-image">
+                
+
+                
+                    
+                        <div class="external-links alone">
+                            
+                              <a href="https://github.com/tsucres/UnoDucky/"><img src="/images/github_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'"> tsucres/UnoDucky</a>
+                            
+                            
+        
+                        </div>
+                    
+                
+                
+
+                </figure>
+            
+            
+            <div class="entry-container">
+
+            
+
+
+                <!-- MAIN -->
+                <h1 class="entry-title">
+                    <a>UnoDucky: a USB Rubber Ducky imitation using an Arduino Uno</a>
+                </h1>
+                
+                <!-- POST CONTENT -->
+                <div class="entry-content">
+                    <p>The aim of this project was to build a USB Rubber Ducky using an Arduino Uno and the components present in the “Arduino Starter Kit”.</p>
+
+<p>The main parts of this project are:</p>
+
+<ol>
+  <li>the arduino circuit</li>
+  <li>the arduino code (sketch)</li>
+  <li>The ducky script encoder, written in Python.</li>
+</ol>
+
+<p>The resulting “device” works like this: you copy the encoded ducky scripts on a micro SD card that you insert in the reader. When the arduino is plugged in a computer, it will let you choose the script you want to run. Then, the arduino will behave like a Rubber Ducky (i.e. like an automatic keyboard).</p>
+
+<h2 id="circuit">Circuit</h2>
+
+<center>
+	<img src="https://github.com/tsucres/UnoDucky/raw/master/images/schema_mini.png" />
+</center>
+
+<p>When assembled, it looks like this:</p>
+<center>
+	<img src="https://github.com/tsucres/UnoDucky/raw/master/images/photo_mini.jpg" />
+</center>
+
+<p>The LCD screen is used to show all the scripts found in the root of the SD card. The buttons allow to navigate through those files and select the script to run.</p>
+
+<p>All the used components are in the official Arduino Starter Kit except for the SD card reader which I bought on <a href="https://www.amazon.fr/gp/product/B01FRZVUH4/ref=oh_aui_detailpage_o01_s00?ie=UTF8&amp;psc=1">amazon</a>.</p>
+
+<h2 id="sketch">Sketch</h2>
+
+<p>The software running on the arduino is pretty simple. It reads the files from the SD card and let the user to select an encoded ducky script to run it.</p>
+
+<p>An encoded ducky script contains the keys the arduino has to send on the host computer.</p>
+
+<div class="github-sample-reference">
+  <div class="author-info">
+    <a href="https://github.com/tsucres/UnoDucky/blob/master/arduino/src/ducky_arduino/ducky_arduino.ino">This Github Sample</a> is by <a href="https://github.com/tsucres">tsucres</a>
+  </div>
+  <div class="meta-info">
+    arduino/src/ducky_arduino/ducky_arduino.ino <a href="https://github.com/tsucres/UnoDucky/blob/master/arduino/src/ducky_arduino/ducky_arduino.ino">view</a> <a href="https://raw.githubusercontent.com/tsucres/UnoDucky/master/arduino/src/ducky_arduino/ducky_arduino.ino">raw</a>
+  </div>
+</div>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include "SdFat.h"
+#include &lt;LiquidCrystal.h&gt;
+#include &lt;string.h&gt;
+</span>
+
+
+<span class="n">LiquidCrystal</span> <span class="n">lcd</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="n">SdFat</span> <span class="n">SD</span><span class="p">;</span>
+<span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">SD_CS_PIN</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">BTN_NEXT_PIN</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">BTN_PLAY_PIN</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">btnNextState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">btnPlayState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">DELAY_B_RELEASE</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">// How many millis before release
+</span><span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">DELAY_A_RELEASE</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span> <span class="c1">// How many millis after release
+</span>
+<span class="n">File</span> <span class="n">root</span><span class="p">;</span>
+<span class="n">File</span> <span class="n">currentFile</span><span class="p">;</span>
+
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Only for debug
+</span>  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+
+  <span class="c1">// SD init
+</span>  <span class="n">initializeSD</span><span class="p">();</span>
+
+  <span class="c1">// buttons init
+</span>  <span class="n">pinMode</span><span class="p">(</span><span class="n">BTN_NEXT_PIN</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">BTN_PLAY_PIN</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>
+
+  <span class="c1">// lcd init
+</span>  <span class="n">lcd</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+  <span class="c1">// show first file on lcd
+</span>  <span class="n">root</span> <span class="o">=</span> <span class="n">SD</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="s">"/"</span><span class="p">);</span>
+  <span class="n">currentFile</span> <span class="o">=</span> <span class="n">getNextFile</span><span class="p">();</span>
+  <span class="n">printFileOnLCD</span><span class="p">(</span><span class="n">currentFile</span><span class="p">);</span>
+  
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">btnPlayCurrentState</span> <span class="o">=</span> <span class="n">digitalRead</span><span class="p">(</span><span class="n">BTN_PLAY_PIN</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">btnPlayCurrentState</span> <span class="o">!=</span> <span class="n">btnPlayState</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Button "Play" pushed
+</span>    <span class="k">if</span> <span class="p">(</span><span class="n">btnPlayCurrentState</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">playCurrentFile</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">btnPlayState</span> <span class="o">=</span> <span class="n">btnPlayCurrentState</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  
+  <span class="kt">int</span> <span class="n">btnNextCurrentState</span> <span class="o">=</span> <span class="n">digitalRead</span><span class="p">(</span><span class="n">BTN_NEXT_PIN</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">btnNextCurrentState</span> <span class="o">!=</span> <span class="n">btnNextState</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Button "Next" pushed
+</span>    <span class="k">if</span> <span class="p">(</span><span class="n">btnNextCurrentState</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">currentFile</span> <span class="o">=</span> <span class="n">getNextFile</span><span class="p">();</span>
+      <span class="n">printFileOnLCD</span><span class="p">(</span><span class="n">currentFile</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">btnNextState</span> <span class="o">=</span> <span class="n">btnNextCurrentState</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+
+<span class="kt">void</span> <span class="nf">initializeSD</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">SD_CS_PIN</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">SD</span><span class="p">.</span><span class="n">begin</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">lcd</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="n">lcd</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Error: SD init"</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">File</span> <span class="nf">getNextFile</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">File</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="n">openNextFile</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">entry</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">root</span><span class="p">.</span><span class="n">rewind</span><span class="p">();</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="n">openNextFile</span><span class="p">();</span>
+  <span class="p">}</span> 
+  <span class="k">while</span> <span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">isDir</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="n">openNextFile</span><span class="p">();</span>
+  <span class="p">}</span> <span class="c1">// TODO: what if there's no file? how to stop?
+</span>  <span class="k">return</span> <span class="n">entry</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">printFileOnLCD</span><span class="p">(</span><span class="n">File</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+  <span class="cm">/**
+   * Print filename and size of the specified file 
+   * on the initialized lcd screen
+   */</span>
+  <span class="kt">char</span> <span class="n">fileName</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+  <span class="n">f</span><span class="p">.</span><span class="n">getName</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+  <span class="n">lcd</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+  <span class="n">lcd</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">fileName</span><span class="p">);</span>
+  <span class="n">lcd</span><span class="p">.</span><span class="n">setCursor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+  <span class="n">lcd</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">size</span><span class="p">());</span><span class="c1">// + " b");
+</span><span class="p">}</span>
+
+
+<span class="kt">int</span> <span class="nf">read8Bytes</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">buf</span><span class="p">)</span> <span class="p">{</span>
+  <span class="cm">/**
+   * Copy 8 bytes from the current file to the specified buffer.
+   * Returns the number of bytes successfully read.
+   */</span>
+  <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">currentFile</span><span class="p">.</span><span class="n">available</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">buf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">currentFile</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+    <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">releaseKey</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">buf</span><span class="p">)</span> 
+<span class="p">{</span>
+  <span class="n">memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span> <span class="c1">// Release key  
+</span><span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">playCurrentFile</span><span class="p">()</span> <span class="p">{</span>
+  <span class="cm">/**
+   * Output the content of the currently selected 
+   * file via the usb port.
+   */</span>
+  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">read8Bytes</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mh">0x07</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Delay
+</span>      <span class="kt">uint8_t</span> <span class="n">delay_time</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+      <span class="n">memcpy</span><span class="p">(</span><span class="n">delay_time</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">7</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">uint8_t</span><span class="p">));</span>
+      <span class="n">delay</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">delay_time</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+      <span class="n">delay</span><span class="p">(</span><span class="n">DELAY_B_RELEASE</span><span class="p">);</span>
+      <span class="n">releaseKey</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+      <span class="n">delay</span><span class="p">(</span><span class="n">DELAY_A_RELEASE</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">currentFile</span><span class="p">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    
+<span class="p">}</span></code></pre></figure>
+
+<h2 id="the-encoder">The encoder</h2>
+
+<p>The encoder is a python script taking a ducky script as input and producing an encoded version of it. It also supports several keyboard layouts.</p>
+
+<div class="github-sample-reference">
+  <div class="author-info">
+    <a href="https://github.com/tsucres/UnoDucky/blob/master/encoder/encoder.py">This Github Sample</a> is by <a href="https://github.com/tsucres">tsucres</a>
+  </div>
+  <div class="meta-info">
+    encoder/encoder.py <a href="https://github.com/tsucres/UnoDucky/blob/master/encoder/encoder.py">view</a> <a href="https://raw.githubusercontent.com/tsucres/UnoDucky/master/encoder/encoder.py">raw</a>
+  </div>
+</div>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="n">import</span> <span class="n">sys</span>
+<span class="n">import</span> <span class="n">os</span>
+<span class="n">import</span> <span class="n">argparse</span>
+
+
+
+<span class="n">current_line</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">ducky_script</span> <span class="o">=</span> <span class="s">""</span>
+<span class="n">ducky_lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="cp"># =======================================================
+# The following functions handle each a rubber ducky 
+# command. They take the eventual parameter as argument.
+# =======================================================
+</span>
+<span class="n">def</span> <span class="n">ducky_STRING</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="n">in</span> <span class="n">text</span><span class="o">:</span>
+        <span class="n">rtn</span> <span class="o">+=</span> <span class="n">char_to_byte</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rtn</span>
+
+<span class="n">def</span> <span class="n">ducky_REM</span><span class="p">(</span><span class="n">rem</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">b</span><span class="err">''</span>
+
+<span class="n">def</span> <span class="n">ducky_ENTER</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">char_to_byte</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">)</span>
+
+<span class="n">def</span> <span class="n">ducky_DELAY</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">if</span> <span class="n">delay</span><span class="p">.</span><span class="n">isdigit</span><span class="p">()</span><span class="o">:</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="sc">'\x07'</span> <span class="o">+</span> <span class="kt">int</span><span class="p">(</span><span class="n">delay</span><span class="p">).</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="err">'</span><span class="n">big</span><span class="err">'</span><span class="p">)</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Invalid delay"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rtn</span>
+
+<span class="n">def</span> <span class="n">ducky_ALT</span><span class="p">(</span><span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"ALT"</span><span class="p">],</span> <span class="n">control</span><span class="p">)</span>
+
+<span class="n">def</span> <span class="n">ducky_SHIFT</span><span class="p">(</span><span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"SHIFT"</span><span class="p">],</span> <span class="n">control</span><span class="p">)</span>
+
+<span class="n">def</span> <span class="n">ducky_CTRL</span><span class="p">(</span><span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"CTRL"</span><span class="p">],</span> <span class="n">control</span><span class="p">)</span>
+
+<span class="n">def</span> <span class="n">ducky_COMMAND</span><span class="p">(</span><span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"COMMAND"</span><span class="p">],</span> <span class="n">control</span><span class="p">)</span>
+
+<span class="n">def</span> <span class="n">ducky_GUI</span><span class="p">(</span><span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"GUI"</span><span class="p">],</span> <span class="n">control</span><span class="p">)</span>
+    
+<span class="n">def</span> <span class="n">ducky_ESC</span><span class="p">(</span><span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"ESC"</span><span class="p">],</span> <span class="n">control</span><span class="p">)</span>
+    
+<span class="n">def</span> <span class="n">ducky_MODIFIERS</span><span class="p">(</span><span class="n">modifier_keys</span><span class="p">,</span> <span class="n">control</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">""" </span><span class="err">
+</span><span class="s">        Returns the bytcode corespnding to the association of the </span><span class="err">
+</span><span class="s">        modifier key (ALT, CTRL, ...) and another key.</span><span class="err">
+
+</span><span class="s">        Parameters</span><span class="err">
+</span><span class="s">        -----------</span><span class="err">
+</span><span class="s">        modifier_keys: str</span><span class="err">
+</span><span class="s">            A string rpreenting a modifier key (defined in lang.modifiers)</span><span class="err">
+</span><span class="s">            One of those values: ["</span><span class="n">CTRL</span><span class="s">", "</span><span class="n">SHIFT</span><span class="s">", "</span><span class="n">ALT</span><span class="s">", "</span><span class="n">COMMAND</span><span class="s">", "</span><span class="n">GUI</span><span class="s">"]</span><span class="err">
+</span><span class="s">        control: str</span><span class="err">
+</span><span class="s">            A string representing the key. May be empty string, otherwise, </span><span class="err">
+</span><span class="s">            must be defined in lang.keys.</span><span class="err">
+</span><span class="s">    """</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="n">modifier_key</span> <span class="o">=</span> <span class="n">bytearray</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="n">in</span> <span class="n">modifier_keys</span><span class="o">:</span>
+        
+        <span class="n">modifier_key</span> <span class="o">=</span> <span class="n">bytes_or</span><span class="p">(</span><span class="n">lang</span><span class="p">.</span><span class="n">modifiers</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">modifier_key</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">control</span> <span class="o">!=</span> <span class="s">""</span><span class="o">:</span> <span class="err">#</span> <span class="n">modifier</span> <span class="o">+</span> <span class="n">something</span>
+        <span class="k">if</span> <span class="n">control</span><span class="p">.</span><span class="n">upper</span><span class="p">()</span> <span class="n">in</span> <span class="n">lang</span><span class="p">.</span><span class="n">keys</span><span class="o">:</span>
+            <span class="n">rtn</span> <span class="o">=</span> <span class="n">bytes_or</span><span class="p">(</span><span class="n">modifier_key</span><span class="p">,</span> <span class="n">lang</span><span class="p">.</span><span class="n">keys</span><span class="p">[</span><span class="n">control</span><span class="p">.</span><span class="n">upper</span><span class="p">()])</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Unknown key : </span><span class="se">\"</span><span class="s">"</span><span class="o">+</span><span class="n">control</span><span class="o">+</span><span class="s">"</span><span class="se">\"</span><span class="s">"</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="o">:</span> <span class="err">#</span> <span class="n">Just</span> <span class="n">the</span> <span class="n">modifier</span> <span class="n">key</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="n">lang</span><span class="p">.</span><span class="n">keys</span><span class="p">[</span><span class="n">modifier_key</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">rtn</span>
+
+
+
+<span class="n">def</span> <span class="n">ducky_REPEAT</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">if</span> <span class="n">nb</span><span class="p">.</span><span class="n">isdigit</span><span class="p">()</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="n">nb</span><span class="p">))</span>
+        <span class="n">print</span><span class="p">((</span><span class="n">ducky_to_hex</span><span class="p">(</span><span class="n">ducky_lines</span><span class="p">[</span><span class="n">current_line</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">*</span><span class="kt">int</span><span class="p">(</span><span class="n">nb</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">current_line</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">:</span>
+            <span class="n">rtn</span> <span class="o">=</span> <span class="p">(</span><span class="n">ducky_to_hex</span><span class="p">(</span><span class="n">ducky_lines</span><span class="p">[</span><span class="n">current_line</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">*</span><span class="kt">int</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"REPEAT can't be the first instruction of the script."</span><span class="p">)</span>
+            
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Invalid repeatition"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rtn</span>
+
+<span class="n">def</span> <span class="n">ducky_KEY</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="n">in</span> <span class="n">lang</span><span class="p">.</span><span class="n">keys</span><span class="o">:</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="n">lang</span><span class="p">.</span><span class="n">keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Unknown key : </span><span class="se">\"</span><span class="s">"</span><span class="o">+</span><span class="n">key</span><span class="o">+</span><span class="s">"</span><span class="se">\"</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rtn</span>
+
+
+
+<span class="cp"># =======================================================
+# =======================================================
+# =======================================================
+</span>
+<span class="n">def</span> <span class="n">bytes_or</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">"""</span><span class="err">
+</span><span class="s">        Returns</span><span class="err">
+</span><span class="s">        --------</span><span class="err">
+</span><span class="s">        bytes</span><span class="err">
+</span><span class="s">            A bitwise OR operation on the two parameters.</span><span class="err">
+</span><span class="s">    """</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">bytearray</span><span class="p">(</span><span class="n">b</span><span class="err">''</span><span class="p">)</span>
+    <span class="n">a_b</span> <span class="o">=</span> <span class="n">bytearray</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">b_b</span> <span class="o">=</span> <span class="n">bytearray</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">a_b</span><span class="p">)</span> <span class="o">!=</span> <span class="n">len</span><span class="p">(</span><span class="n">b_b</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">return</span> <span class="n">b</span><span class="err">''</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">len</span><span class="p">(</span><span class="n">a_b</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">rtn</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">|</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">rtn</span>
+
+<span class="cp"># Dictionnary that associates a ducky command with the 
+# function that handles its translation to bytecode.
+</span><span class="n">supported_command</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"STRING"</span><span class="o">:</span> <span class="n">ducky_STRING</span><span class="p">,</span>
+    <span class="s">"REM"</span><span class="o">:</span> <span class="n">ducky_REM</span><span class="p">,</span>
+    <span class="s">"ENTER"</span><span class="o">:</span> <span class="n">ducky_ENTER</span><span class="p">,</span>
+    <span class="s">"DELAY"</span><span class="o">:</span> <span class="n">ducky_DELAY</span><span class="p">,</span>
+    <span class="s">"ALT"</span><span class="o">:</span> <span class="n">ducky_ALT</span><span class="p">,</span> 
+    <span class="s">"SHIFT"</span><span class="o">:</span> <span class="n">ducky_SHIFT</span><span class="p">,</span> 
+    <span class="s">"CTRL"</span><span class="o">:</span> <span class="n">ducky_CTRL</span><span class="p">,</span> 
+    <span class="s">"CONTROL"</span><span class="o">:</span> <span class="n">ducky_CTRL</span><span class="p">,</span> 
+    <span class="s">"ESC"</span><span class="o">:</span> <span class="n">ducky_ESC</span><span class="p">,</span> 
+    <span class="s">"ESCAPE"</span><span class="o">:</span> <span class="n">ducky_ESC</span><span class="p">,</span> 
+    <span class="s">"COMMAND"</span><span class="o">:</span> <span class="n">ducky_COMMAND</span><span class="p">,</span> 
+    <span class="s">"REPEAT"</span><span class="o">:</span> <span class="n">ducky_REPEAT</span><span class="p">,</span>
+    <span class="s">"GUI"</span><span class="o">:</span> <span class="n">ducky_GUI</span><span class="p">,</span> 
+    <span class="s">"WINDOWS"</span><span class="o">:</span> <span class="n">ducky_GUI</span><span class="p">,</span> 
+    <span class="s">"CTRL-SHIFT"</span><span class="o">:</span> <span class="p">(</span><span class="n">lambda</span> <span class="n">c</span><span class="o">:</span> <span class="n">ducky_MODIFIERS</span><span class="p">([</span><span class="s">"CTRL"</span><span class="p">,</span> <span class="s">"SHIFT"</span><span class="p">],</span> <span class="n">c</span><span class="p">)),</span> 
+<span class="p">}</span>
+
+<span class="n">def</span> <span class="n">char_to_byte</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">"""</span><span class="err">
+</span><span class="s">        Converts a character to the key combinaison that produces it, expressed in a height bytes long bytecode.</span><span class="err">
+</span><span class="s">        Parameters</span><span class="err">
+</span><span class="s">        ----------</span><span class="err">
+</span><span class="s">        c : str</span><span class="err">
+</span><span class="s">            A single character, well defined in lang.chars.</span><span class="err">
+</span><span class="s">    """</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="n">in</span> <span class="n">lang</span><span class="p">.</span><span class="n">chars</span><span class="o">:</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="n">lang</span><span class="p">.</span><span class="n">chars</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Unsupported character : '"</span> <span class="o">+</span> <span class="n">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="s">"'"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rtn</span>
+
+
+<span class="n">def</span> <span class="n">ducky_to_hex</span><span class="p">(</span><span class="n">ducky_line</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">"""</span><span class="err">
+</span><span class="s">        Takes a line of ducky script and returns an encoded, equivalent bytecode, for the arduino</span><span class="err">
+</span><span class="s">    """</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">ducky_line</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">:</span>
+        <span class="k">if</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">in</span> <span class="n">supported_command</span><span class="o">:</span>
+            <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="o">:</span>
+                <span class="n">rtn</span> <span class="o">=</span> <span class="n">supported_command</span><span class="p">[</span><span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]]()</span>
+            <span class="k">else</span><span class="o">:</span>
+                <span class="n">rtn</span> <span class="o">=</span> <span class="n">supported_command</span><span class="p">[</span><span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]](</span><span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">elif</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">in</span> <span class="n">lang</span><span class="p">.</span><span class="n">keys</span><span class="o">:</span>
+            <span class="n">rtn</span> <span class="o">=</span> <span class="n">ducky_KEY</span><span class="p">(</span><span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="o">:</span>
+            <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Invalid script: </span><span class="se">\"</span><span class="s">"</span> <span class="o">+</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">"</span><span class="se">\"</span><span class="s"> is not a valid command"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rtn</span>
+
+
+<span class="n">def</span> <span class="n">encode_ducky</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">global</span> <span class="n">ducky_lines</span><span class="p">,</span> <span class="n">current_line</span>
+
+    <span class="n">ducky_lines</span> <span class="o">=</span> <span class="n">ducky_script</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">)</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="n">b</span><span class="err">''</span>
+    <span class="k">while</span> <span class="n">current_line</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">(</span><span class="n">ducky_lines</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">ducky_lines</span><span class="p">[</span><span class="n">current_line</span><span class="p">]</span>
+        <span class="n">try</span><span class="o">:</span>
+            <span class="n">rtn</span> <span class="o">+=</span> <span class="n">ducky_to_hex</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="n">except</span> <span class="n">Exception</span> <span class="n">as</span> <span class="n">e</span><span class="o">:</span>
+            <span class="n">raise</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Syntax error at line "</span> <span class="o">+</span> <span class="n">str</span><span class="p">(</span><span class="n">current_line</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">" in the script : </span><span class="se">\n</span><span class="s">"</span> <span class="o">+</span> <span class="n">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="n">current_line</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">rtn</span>
+
+
+
+<span class="n">def</span> <span class="n">generate_output_filename</span><span class="p">(</span><span class="n">input_filename</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">""" Returns the input_filename with a new extention """</span>
+    <span class="k">return</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">input_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="err">'</span><span class="p">.</span><span class="n">bin</span><span class="err">'</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="err">'</span><span class="o">-</span><span class="n">i</span><span class="err">'</span><span class="p">,</span> <span class="err">'</span><span class="o">--</span><span class="n">input_file</span><span class="err">'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="err">'</span><span class="n">store</span><span class="err">'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Input filename"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
+<span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="err">'</span><span class="o">-</span><span class="n">o</span><span class="err">'</span><span class="p">,</span> <span class="err">'</span><span class="o">--</span><span class="n">output_file</span><span class="err">'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="err">'</span><span class="n">store</span><span class="err">'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Output filename"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">False</span><span class="p">)</span>
+<span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="err">'</span><span class="o">-</span><span class="n">l</span><span class="err">'</span><span class="p">,</span> <span class="err">'</span><span class="o">--</span><span class="n">key_layout</span><span class="err">'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="err">'</span><span class="n">store</span><span class="err">'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="err">'</span><span class="n">en_us</span><span class="err">'</span><span class="p">,</span> <span class="err">'</span><span class="n">fr_be</span><span class="err">'</span><span class="p">],</span> <span class="n">help</span><span class="o">=</span><span class="s">"Keyboard layout"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">False</span><span class="p">,</span> <span class="k">default</span><span class="o">=</span><span class="err">'</span><span class="n">en_us</span><span class="err">'</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+<span class="n">lang</span> <span class="o">=</span> <span class="n">__import__</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">key_layout</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">args</span><span class="p">.</span><span class="n">output_file</span> <span class="o">==</span> <span class="n">None</span><span class="o">:</span>
+    <span class="n">args</span><span class="p">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">generate_output_filename</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">input_file</span><span class="p">)</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">input_file</span><span class="p">,</span> <span class="s">"r"</span><span class="p">)</span>
+<span class="n">ducky_script</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">f</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">compiled</span> <span class="o">=</span> <span class="n">encode_ducky</span><span class="p">()</span>
+
+
+<span class="n">fo</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">output_file</span><span class="p">,</span> <span class="s">"wb+"</span><span class="p">)</span>
+<span class="n">fo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">compiled</span><span class="p">)</span></code></pre></figure>
+
+<h2 id="source-code">Source code</h2>
+<p>The whole project (including source code, documentation and installation instructions) is on <a href="https://github.com/tsucres/UnoDucky">github</a>.</p>
+
+<p><strong>Note</strong>: The project was made for fun and doesn’t intend to replace a Rubber Ducky. It’s not really usable, just functional.</p>
+
+
+                </div>  
+
+                <!--- DIVIDING LINE -->
+                <hr>
+        
+                <!-- POST TAGS -->
+                <div class="inline-tags">
+                    <span>
+                        
+                            <a href="/tags/#Python">#Python</a>
+                        
+                            <a href="/tags/#C">#C</a>
+                        
+                            <a href="/tags/#Arduino">#Arduino</a>
+                        
+                    </span>
+                </div>
+              
+                <br>
+                
+                <!-- POST DATE -->
+                <div class="post-date">
+                    OCTOBER 15, 2017
+                </div>
+            </div>
+        </article>
+    </div>
+
+
+    <!-- FOOTER -->  
+<footer>  
+    <div class="footer-wrapper">
+        <footer role="contentinfo">
+            <span>
+    &copy; 2018 Stéphane Sercu.<br>Hosted on <a target="_blank" href="https://github.com/tsucres/">github</a>.
+</span>
+
+        </footer>
+    </div>   
+</footer>  
+
+  
+  <script type="text/javascript" src="/assets/js/bluepil.js"></script>  
+  <script type="text/javascript">
+  	PIL.go();
+  </script>
+</body>
+
+
+  
+</html>

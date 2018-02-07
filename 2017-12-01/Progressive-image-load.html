@@ -1,0 +1,819 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+   
+<head>
+  <meta charset="utf-8">
+<title>How to progressively load large images in Javascript &#8211; Stéphane Sercu</title>
+<meta name="description" content="A summary and explanation of different techniques I tried to mimic the way Medium loads the images on its posts.">
+<meta name="keywords" content="Js">
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/manifest.json">
+<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#3b8ad5">
+<link rel="shortcut icon" href="/icons/favicon.ico">
+<meta name="msapplication-config" content="/icons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to progressively load large images in Javascript">
+<meta property="og:description" content="A summary and explanation of different techniques I tried to mimic the way Medium loads the images on its posts.">
+<meta property="og:url" content="/2017-12-01/Progressive-image-load.html">
+<meta property="og:site_name" content="Stéphane Sercu">
+
+
+
+
+
+<link rel="canonical" href="/2017-12-01/Progressive-image-load.html">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/bluepil.min.css">
+<link href="//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic" rel="stylesheet" type="text/css">
+
+
+</head>
+<body>
+	
+      <!-- HEADER IMAGE -->
+<div class="entry-header">
+    
+    <div class="entry-image progressive-bg-image" data-full-image-path="/images/header/background.png" data-miniature-path="/images/header/background_mini.png">
+      <noscript><img class="full-absolute object-fit-cover" src="/images/header/background.png"></noscript>
+    
+    </div><!-- /.entry-image -->
+  
+  <div class="header-title">
+    <div class="header-title-wrap">
+      <h1><a href="/">Stéphane Sercu</a></h1>
+      <h2>Passionate software engineer student</h2>
+      <p>Hi! I'm a student at the Polytechnic School of Brussels, currently enrolled for a master degree in Computer Science and Engineering. On this website you'll find a short presentation of some of my projects. <a href="/about">Learn more about me</a>.</p>
+    </div><!-- /.header-title-wrap -->
+  </div><!-- /.header-title -->
+
+  
+  <div class="external-links">
+    
+      <a href="https://www.github.com/tsucres/"><img src="/images/github_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'">@tsucres</a>
+    
+    
+      <a href="https://www.linkedin.com/in/ssercu/"><img src="/images/linkedin_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'">@ssercu</a>
+    
+    
+      <a data-name="sercu.stephane" data-domain="gmail" data-tld="com" href="#" class="cryptedmail" onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld"><img src="/images/email_logo.svg" onerror="this.onerror=null; this.src='/images/email_logo.png'"></a>
+      
+    
+    </div>
+  
+</div>
+
+<!-- NAVIGATION -->
+<br><br>
+<center>
+    <span class="navigation-bar">
+        <a href="/">HOME</a>
+        <a href="/projects">PROJECTS</a>
+        <a href="/archives/">ARCHIVE</a>
+        <a href="/tags/">TAGS</a>
+        <a href="/about/">ABOUT</a>
+    </span>
+</center> 
+    <!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+    
+    <div id="main" role="main">
+        <article class="hentry">
+            
+            <div class="entry-container">
+
+            
+
+
+                <!-- MAIN -->
+                <h1 class="entry-title">
+                    <a>How to progressively load large images in Javascript</a>
+                </h1>
+                
+                <!-- POST CONTENT -->
+                <div class="entry-content">
+                    <p>When building a webpage that contains large images, you don’t want to force your users to wait till all the images of the page are loaded before they can actually use it. You most probably want to control the way those images are loaded.</p>
+
+<p>The solution described here consists in showing a very small miniature of the real image, and transitioning to the full image when it’s done loading. A lot of popular websites, as for example <a href="https://www.medium.com">Medium</a>, <a href="https://www.quora.com">Quora</a> or even <a href="https://www.facebook.com">Facebook</a>, already implement this functionality.</p>
+
+<p align="center">
+<img src="https://github.com/tsucres/BluePil.js/raw/master/screenshots/bluepil_mini.gif" />
+</p>
+<!-- TODO: demo button -->
+
+<p>Several libraries already exists for this. I listed some of them at the end of the article. However, they generally don’t handle background-images and lack of customisability.</p>
+
+<p>Here, I’ll focus on a method inspired from the <a href="https://github.com/zafree/pilpil">pilpil.js</a> library that I adapted to work with background-images.</p>
+
+<p>I wrapped the whole method in a js library that I randomly called <a href="https://github.com/tsucres/BluePil.js">BluePil.js</a>. Its <a href="https://tsucres.github.io/BluePil.js/">demo page</a> is a good illustration of what is discussed in this post.</p>
+
+<center><a href="https://tsucres.github.io/BluePil.js/">DEMO</a></center>
+
+<h1 id="background-images">Background images</h1>
+
+<p>For this section, I assume that the <code class="highlighter-rouge">background-size</code> is <code class="highlighter-rouge">cover</code>, which is the most common option.</p>
+
+<h2 id="markup">Markup</h2>
+
+<p>The markup is fairly simple, it consists in adding the following elements:</p>
+<ol>
+  <li>the class <code class="highlighter-rouge">progressive-bg-image</code> to the element with the background</li>
+  <li>an <code class="highlighter-rouge">img</code> tag for the miniature image and one for the full image</li>
+  <li>a canvas to draw a blurred version of the miniature</li>
+</ol>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"progressive-bg-image"</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- Progressively loads the background --&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"hidden thumbnail"</span> <span class="na">src=</span><span class="s">"&lt;mini image path&gt;"</span><span class="nt">&gt;</span> 
+    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"full-bg-image hidden"</span> <span class="na">src=</span><span class="s">"&lt;full image path&gt;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;canvas</span> <span class="na">class=</span><span class="s">"full-absolute progressive-img-load-canvas"</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+    <span class="c">&lt;!-- =============== --&gt;</span>
+
+    <span class="c">&lt;!-- your content (relatively positioned) ... --&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.full-absolute</span> <span class="p">{</span>
+    <span class="nl">position</span><span class="p">:</span> <span class="nb">absolute</span><span class="p">;</span>
+    <span class="nl">top</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span> <span class="nl">left</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span> <span class="nl">right</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span> <span class="nl">bottom</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.progressive-img-load-canvas</span> <span class="p">{</span>
+    <span class="nl">-webkit-transition</span><span class="p">:</span> <span class="n">opacity</span> <span class="m">.5s</span><span class="p">;</span>
+            <span class="nl">transition</span><span class="p">:</span> <span class="n">opacity</span> <span class="m">.5s</span><span class="p">;</span> 
+<span class="p">}</span>
+<span class="nc">.full-loaded</span> <span class="nc">.progressive-img-load-canvas</span> <span class="p">{</span>
+    <span class="nl">opacity</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.progressive-bg-image</span> <span class="p">{</span>
+    <span class="nl">background-position</span><span class="p">:</span> <span class="nb">center</span> <span class="nb">center</span><span class="p">;</span>
+    <span class="nl">background-size</span><span class="p">:</span> <span class="n">cover</span><span class="p">;</span>
+    <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.hidden</span> <span class="p">{</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+    <span class="nl">visibility</span><span class="p">:</span> <span class="nb">hidden</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>the class <code class="highlighter-rouge">progressive-bg-image</code> will be used by the js code to locate the DOM elements the effect has to be applied on.</li>
+  <li>the <code class="highlighter-rouge">full-absolute</code> class makes the canvas fit the parent element (and makes it look like its background).</li>
+  <li>the <code class="highlighter-rouge">img.thumbnail</code> and <code class="highlighter-rouge">img.full-bg-image</code> elements are only used to specify to the browser which images to download and to make it download them asap. This is why they’re hidden.</li>
+  <li>the canvas is used to render the blurred miniature. The <code class="highlighter-rouge">progressive-img-load-canvas</code> class defines the transition on the visibility of the canvas. It will also be used by the js code to identify the canvas.</li>
+  <li>the <code class="highlighter-rouge">full-loaded</code> class will be added (by the js code) to the root div (<code class="highlighter-rouge">.progressive-bg-image</code>) when the full image is loaded on the page. It’s used to hide the canvas.</li>
+</ul>
+
+<p>When the full image is finished downloading, it will be assigned as the background for the <code class="highlighter-rouge">.progressive-bg-image</code> element. Then the <code class="highlighter-rouge">full-loaded</code> class will be added to the root element to make the canvas disappear smoothly.</p>
+
+<p>Concerning the size of the miniature, I usually use images with a width of around 20 pixels. An image of this resolution usually weights a couple of kilobytes and, thanks to the blur effect, is sufficient to look good.</p>
+
+<h2 id="javascript">Javascript</h2>
+
+<p>Now, let’s make that markup come to live!</p>
+
+<p>We will implement two functions:</p>
+<ul>
+  <li>the first one (<code class="highlighter-rouge">initBgImage</code>) will download and draw the miniature in the canvas</li>
+  <li>the second one (<code class="highlighter-rouge">loadFullBgImage</code>) will download the full image and display it instead of the miniature. We’ll also implement a transition effect.</li>
+</ul>
+
+<p>Implementing those methods separately will allow us to call them at different times. For example, (spoiler alert) drawing the miniature when the page loads, but start downloading the full image only when the element appears in the viewport (typically when the user scrolls).</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">initBgImage</span><span class="p">(</span><span class="nx">root_el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">miniatureImg</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".thumbnail"</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".progressive-img-load-canvas"</span><span class="p">);</span>
+    <span class="nx">drawMiniatureForBgImage</span><span class="p">(</span><span class="nx">root_el</span><span class="p">,</span> <span class="nx">miniatureImg</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">drawMiniatureForBgImage</span><span class="p">(</span><span class="nx">root_el</span><span class="p">,</span> <span class="nx">miniatureImg</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">thumbnail</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+    <span class="nx">thumbnail</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">canvasImage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CanvasImage</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">);</span>
+        <span class="nx">canvasImage</span><span class="p">.</span><span class="nx">blur</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="nx">thumbnail</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">miniatureImg</span><span class="p">.</span><span class="nx">src</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">CanvasImage</code> object is borrowed from the <a href="https://github.com/zafree/pilpil">pilpil.js</a> library. It acts as an extension to the htmlCanvasElement and adds a <code class="highlighter-rouge">blur</code> method to it. This method is then used (in the <code class="highlighter-rouge">drawMiniatureForBgImage</code> function) to draw the miniature image.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// source: pilpil.js</span>
+<span class="nx">CanvasImage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">canvasEL</span><span class="p">,</span> <span class="nx">image</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">image</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">canvasEL</span><span class="p">;</span>
+    <span class="nx">canvasEL</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">image</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+    <span class="nx">canvasEL</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">image</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">canvasEL</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">'2d'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="nx">CanvasImage</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">blur</span><span class="p">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">globalAlpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="o">-</span><span class="nx">e</span><span class="p">;</span> <span class="nx">t</span> <span class="o">&lt;=</span> <span class="nx">e</span><span class="p">;</span> <span class="nx">t</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="nx">e</span><span class="p">;</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="nx">e</span><span class="p">;</span> <span class="nx">n</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">t</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">blob</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">t</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="p">(</span><span class="nx">t</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>As for the <code class="highlighter-rouge">loadFullBgImage</code> function, its implementation is pretty straightforward:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">loadFullBgImage</span><span class="p">(</span><span class="nx">root_el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">fullBgImg</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".full-bg-image"</span><span class="p">),</span>
+    <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".progressive-img-load-canvas"</span><span class="p">);</span>
+    
+    <span class="c1">// Callback when the full image is downloaded.</span>
+    <span class="c1">// Shows the full image and add the full-loaded class to root_el to hide the miniature.</span>
+    <span class="kd">function</span> <span class="nx">fullBackgroundImageLoaded</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">root_el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundImage</span> <span class="o">=</span> <span class="s1">'url('</span> <span class="o">+</span> <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">+</span> <span class="s1">')'</span><span class="p">;</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> 
+            <span class="c1">// requestAnimationFrame makes sure the image is showed before removing the miniature.</span>
+            <span class="nx">root_el</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-loaded"</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span> 
+
+    <span class="c1">// Start downloading the full image.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">&amp;&amp;</span> <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">complete</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">fullBackgroundImageLoaded</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'load'</span><span class="p">,</span> <span class="nx">fullBackgroundImageLoaded</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Note that we can easily call those functions for every <code class="highlighter-rouge">.progressive-bg-image</code> element of the page with this simple javascript:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c1">// After window has loaded! (in the window.onload)</span>
+
+<span class="kd">var</span> <span class="nx">progressiveBgs</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"progressive-bg-image"</span><span class="p">);</span>
+
+<span class="c1">// 1) load/show all miniatures</span>
+<span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">progressiveBgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">initBgImage</span><span class="p">(</span><span class="nx">progressiveBgs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Let's catch the errors so that if one image in the document </span>
+        <span class="c1">// fails to load, it doesn't affect the other ones.</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> 
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2) start downloading the full images</span>
+<span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">progressiveBgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">loadFullBgImage</span><span class="p">(</span><span class="nx">progressiveBgs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> 
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>You can see the result in the jsfiddle bellow:</p>
+
+<iframe width="100%" height="300" src="//jsfiddle.net/tsucres/63vhfaxt/7/embedded/" allowpaymentrequest="" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<h2 id="ameliorations">Ameliorations</h2>
+
+<h3 id="noscript-fallback">noscript fallback</h3>
+
+<p>The problem with the previous markup is that if the user’s browser doesn’t run javascript, the image will never be assigned as the background of the <code class="highlighter-rouge">div</code> and stay invisible to the user. An easy workaround is to add an <code class="highlighter-rouge">img</code> tag inside a <code class="highlighter-rouge">noscript</code> tag and give it a style such that it looks like a background image.</p>
+
+<p>This gives us the following markup:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"progressive-bg-image"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;noscript&gt;&lt;img</span> <span class="na">class=</span><span class="s">"full-absolute object-fit-cover"</span> <span class="na">src=</span><span class="s">"&lt;full image path&gt;"</span><span class="nt">&gt;&lt;/noscript&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"hidden thumbnail"</span> <span class="na">src=</span><span class="s">"&lt;mini image path&gt;"</span><span class="nt">&gt;</span> 
+    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"full-bg-image hidden"</span> <span class="na">src=</span><span class="s">"&lt;full image path&gt;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;canvas</span> <span class="na">class=</span><span class="s">"full-absolute progressive-img-load-canvas"</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>With the additional style:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.object-fit-cover</span> <span class="p">{</span>
+    <span class="nl">-o-object-fit</span><span class="p">:</span> <span class="n">cover</span><span class="p">;</span>
+       <span class="nl">object-fit</span><span class="p">:</span> <span class="n">cover</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This class with the <code class="highlighter-rouge">.full-absolute</code> class make the <code class="highlighter-rouge">img</code> appearing like a background.</p>
+
+<h3 id="background-position">Background position</h3>
+
+<p>You may want to change the position of the background image through the css property <code class="highlighter-rouge">background-position</code>. If you do so with the current javascript, you will see that the position of the image in the canvas doesn’t match the background image.</p>
+
+<p>To solve this, we have to modify the way we draw the miniature in the canvas. We will use the following function that mimics the behavior of the <code class="highlighter-rouge">background-position: cover</code> setting:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// This function was conveniently found on this stackoverflow question: </span>
+<span class="c1">// https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894</span>
+<span class="cm">/**
+ * By Ken Fyrstenberg Nilsen
+ *
+ * drawImageProp(context, image [, x, y, width, height [,offsetX, offsetY]])
+ *
+ * If image and context are only arguments rectangle will equal canvas
+*/</span>
+<span class="kd">function</span> <span class="nx">drawImageProp</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">img</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">offsetX</span><span class="p">,</span> <span class="nx">offsetY</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="kr">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">w</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+        <span class="nx">h</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">/// default offset is center</span>
+    <span class="nx">offsetX</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">offsetX</span> <span class="o">===</span> <span class="s1">'number'</span> <span class="p">?</span> <span class="nx">offsetX</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">;</span>
+    <span class="nx">offsetY</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">offsetY</span> <span class="o">===</span> <span class="s1">'number'</span> <span class="p">?</span> <span class="nx">offsetY</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">;</span>
+
+    <span class="c1">/// keep bounds [0.0, 1.0]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">offsetX</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">offsetX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">offsetY</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">offsetY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">offsetX</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">offsetX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">offsetY</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">offsetY</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">iw</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
+        <span class="nx">ih</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
+        <span class="nx">r</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">w</span> <span class="o">/</span> <span class="nx">iw</span><span class="p">,</span> <span class="nx">h</span> <span class="o">/</span> <span class="nx">ih</span><span class="p">),</span>
+        <span class="nx">nw</span> <span class="o">=</span> <span class="nx">iw</span> <span class="o">*</span> <span class="nx">r</span><span class="p">,</span>   <span class="c1">/// new prop. width</span>
+        <span class="nx">nh</span> <span class="o">=</span> <span class="nx">ih</span> <span class="o">*</span> <span class="nx">r</span><span class="p">,</span>   <span class="c1">/// new prop. height</span>
+        <span class="nx">cx</span><span class="p">,</span> <span class="nx">cy</span><span class="p">,</span> <span class="nx">cw</span><span class="p">,</span> <span class="nx">ch</span><span class="p">,</span> <span class="nx">ar</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">/// decide which gap to fill    </span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nw</span> <span class="o">&lt;</span> <span class="nx">w</span><span class="p">)</span> <span class="nx">ar</span> <span class="o">=</span> <span class="nx">w</span> <span class="o">/</span> <span class="nx">nw</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nh</span> <span class="o">&lt;</span> <span class="nx">h</span><span class="p">)</span> <span class="nx">ar</span> <span class="o">=</span> <span class="nx">h</span> <span class="o">/</span> <span class="nx">nh</span><span class="p">;</span>
+    <span class="nx">nw</span> <span class="o">*=</span> <span class="nx">ar</span><span class="p">;</span>
+    <span class="nx">nh</span> <span class="o">*=</span> <span class="nx">ar</span><span class="p">;</span>
+
+    <span class="c1">/// calc source rectangle</span>
+    <span class="nx">cw</span> <span class="o">=</span> <span class="nx">iw</span> <span class="o">/</span> <span class="p">(</span><span class="nx">nw</span> <span class="o">/</span> <span class="nx">w</span><span class="p">);</span>
+    <span class="nx">ch</span> <span class="o">=</span> <span class="nx">ih</span> <span class="o">/</span> <span class="p">(</span><span class="nx">nh</span> <span class="o">/</span> <span class="nx">h</span><span class="p">);</span>
+
+    <span class="nx">cx</span> <span class="o">=</span> <span class="p">(</span><span class="nx">iw</span> <span class="o">-</span> <span class="nx">cw</span><span class="p">)</span> <span class="o">*</span> <span class="nx">offsetX</span><span class="p">;</span>
+    <span class="nx">cy</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ih</span> <span class="o">-</span> <span class="nx">ch</span><span class="p">)</span> <span class="o">*</span> <span class="nx">offsetY</span><span class="p">;</span>
+
+    <span class="c1">/// make sure source rectangle is valid</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">cx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cy</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">cy</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cw</span> <span class="o">&gt;</span> <span class="nx">iw</span><span class="p">)</span> <span class="nx">cw</span> <span class="o">=</span> <span class="nx">iw</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">ch</span> <span class="o">&gt;</span> <span class="nx">ih</span><span class="p">)</span> <span class="nx">ch</span> <span class="o">=</span> <span class="nx">ih</span><span class="p">;</span>
+
+    <span class="c1">/// fill image in dest. rectangle</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">img</span><span class="p">,</span> <span class="nx">cx</span><span class="p">,</span> <span class="nx">cy</span><span class="p">,</span> <span class="nx">cw</span><span class="p">,</span> <span class="nx">ch</span><span class="p">,</span>  <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">h</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Using this function, we can easily change the position of the drawn image using the <code class="highlighter-rouge">xOffset</code> and <code class="highlighter-rouge">yOffset</code> parameters. Those must be numbers between 0 and 1.</p>
+
+<p>To make the code as versatile as possible, we will retrieve the position of the background using the following code:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c1">// in drawMiniatureForBgImage()</span>
+
+<span class="nx">offsets</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">root_el</span><span class="p">,</span> <span class="kc">null</span><span class="p">).</span><span class="nx">backgroundPosition</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">offsets</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">offset</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// At this point, xOffset = offsets[0] and yOffset = offsets[1]</span>
+</code></pre></div></div>
+
+<p>This will ensure that the position of the background will be matched by the miniature in the canvas.</p>
+
+<p>Finally, we adapt the <code class="highlighter-rouge">CanvasImage</code> like this:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * CanvasImage(canvasEl, image [, w, h [, xOffset, yOffset]])
+ * canvasEl: the canvas to draw the image on
+ * image: the image to draw
+ * w: the width to give to the image on the canvas
+ * h: the height to give to the image on the canvas
+ * xOffset: number in [0 : 1], default: 0.5
+ * yOffset: number in [0 : 1], default: 0.5
+ */</span>
+<span class="nx">CanvasImage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">canvasEl</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">xOffset</span><span class="p">,</span> <span class="nx">yOffset</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">image</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">canvasEl</span><span class="p">;</span>
+    <span class="nx">canvasEl</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">w</span> <span class="o">===</span> <span class="s1">'number'</span> <span class="p">?</span> <span class="nx">w</span> <span class="p">:</span> <span class="nx">image</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+    <span class="nx">canvasEl</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">h</span> <span class="o">===</span> <span class="s1">'number'</span> <span class="p">?</span> <span class="nx">h</span> <span class="p">:</span> <span class="nx">image</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+    
+    <span class="nx">xOffset</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">xOffset</span> <span class="o">===</span> <span class="s1">'number'</span> <span class="p">?</span> <span class="nx">xOffset</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">;</span>
+    <span class="nx">yOffset</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">yOffset</span> <span class="o">===</span> <span class="s1">'number'</span> <span class="p">?</span> <span class="nx">yOffset</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">canvasEl</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">'2d'</span><span class="p">);</span>
+    <span class="nx">drawImageProp</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">canvasEl</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvasEl</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span> <span class="nx">xOffset</span><span class="p">,</span> <span class="nx">yOffset</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// ......</span>
+
+<span class="c1">// in drawMiniatureForBgImage()</span>
+
+<span class="kd">var</span> <span class="nx">canvasImage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CanvasImage</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">,</span> <span class="nx">offsets</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">offsets</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="nx">canvasImage</span><span class="p">.</span><span class="nx">blur</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+</code></pre></div></div>
+
+<p>Now you can just change the <code class="highlighter-rouge">background-position</code> of the <code class="highlighter-rouge">.progressive-bg-image</code> element and observe that the miniature in the canvas matches its position.</p>
+
+<h3 id="make-the-images-load-only-when-they-enter-the-viewport">Make the images load only when they enter the viewport</h3>
+
+<p>Now we want to prevent the images to load straight away and trigger the download only when they appear in the viewport (as the user scrolls down).</p>
+
+<p>To achieve this, we need to slightly change the markup to remove the <code class="highlighter-rouge">src</code> attribute from the full-background image (otherwise, the browser will start loading the image as soon as it parses the DOM):</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+...
+    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"full-bg-image hidden"</span> <span class="na">data-src=</span><span class="s">"&lt;full image path&gt;"</span><span class="nt">&gt;</span>
+...
+
+</code></pre></div></div>
+
+<p>When we finally want to start download the image, we have to assign the value of <code class="highlighter-rouge">data-src</code> to the <code class="highlighter-rouge">src</code> attribute. To that end, we add the following code in the <code class="highlighter-rouge">loadFullBgImage</code> function:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+
+    <span class="c1">// Start downloading the full image.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">&amp;&amp;</span> <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">complete</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">fullBackgroundImageLoaded</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'load'</span><span class="p">,</span> <span class="nx">fullBackgroundImageLoaded</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">hasAttribute</span><span class="p">(</span><span class="s2">"data-src"</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">src</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+ 
+<span class="c1">// ...</span>
+
+</code></pre></div></div>
+
+<p>All we have to do now, is call <code class="highlighter-rouge">loadFullBgImage</code> when it pleases us. This can be when the image enters the viewport. To do so, the idea is to use a function (let’s call it <code class="highlighter-rouge">loadNewlyAppearedImages</code>) to check, for each of the “not yet loaded” <code class="highlighter-rouge">.progressive-bg-image</code>, if they are in the viewport and to bind it to the <code class="highlighter-rouge">scroll</code> event of the window.</p>
+
+<p>To simplify the detection of “not yet loaded” elements, we can add the class <code class="highlighter-rouge">scroll-loaded</code> to the elements to load with the scroll event.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">loadNewlyAppearedImages</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 1) Get all the "not yet loaded" elements</span>
+    <span class="kd">var</span> <span class="nx">scrollLoadedElements</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"scroll-loaded"</span><span class="p">);</span>
+
+    <span class="c1">// 2) get window measurements</span>
+    <span class="kd">var</span> <span class="nx">window_height</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">window_top_position</span> <span class="o">=</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">pageYOffset</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">?</span> <span class="nb">window</span><span class="p">.</span><span class="nx">pageYOffset</span> <span class="p">:</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">parentNode</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">scrollTop</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">window_bottom_position</span> <span class="o">=</span> <span class="p">(</span><span class="nx">window_top_position</span> <span class="o">+</span> <span class="nx">window_height</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">scrollLoadedElements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 3) calculate position of each element according to the viewport</span>
+        <span class="kd">var</span> <span class="nx">el_rect</span> <span class="o">=</span> <span class="nx">scrollLoadedElements</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">getBoundingClientRect</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">element_top_position</span> <span class="o">=</span> <span class="nx">window_top_position</span> <span class="o">+</span> <span class="nx">el_rect</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">element_bottom_position</span> <span class="o">=</span> <span class="nx">element_top_position</span> <span class="o">+</span> <span class="nx">el_rect</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">element_bottom_position</span> <span class="o">&gt;</span> <span class="nx">window_top_position</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">element_top_position</span> <span class="o">&lt;</span> <span class="nx">window_bottom_position</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="c1">// 4) load the elements inside the viewport</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">scrollLoadedElements</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">classList</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="s2">"progressive-bg-image"</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">PIL</span><span class="p">.</span><span class="nx">loadBgImage</span><span class="p">(</span><span class="nx">scrollLoadedElements</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+            <span class="p">}</span> 
+
+            <span class="c1">// 5) Mark the element as loaded by the removing the 'scroll-loaded' class</span>
+            <span class="nx">scrollLoadedElements</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">classList</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s2">"scroll-loaded"</span><span class="p">);</span>
+
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"scroll"</span><span class="p">,</span> <span class="nx">loadNewlyAppearedImages</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"resize"</span><span class="p">,</span> <span class="nx">loadNewlyAppearedImages</span><span class="p">);</span>
+
+
+</code></pre></div></div>
+
+<p>Another implementation would consist in loading the images sequentially, i.e. start loading an image as soon as the previous image (in the DOM) has loaded. This would prioritize the first images and hopefully make them load faster. I will not explicit the implementation here (it’s pretty straightforward). Checkout <a href="https://tsucres.github.io/BluePil.js/demo/sequential_loading.html">bluepil’s demo</a> for an example.</p>
+
+<h3 id="automatically-generate-the-markup">Automatically generate the markup</h3>
+
+<p>The code as it is now works just fine, but it’s a bit heavy isn’t it? If you’re like me, you don’t want to have to copy-paste it each time you want to put a background image somewhere on your webpages. So why not make a javascript function that builds the markup for us?</p>
+
+<p>We will make a js function that generates the full markup described earlier out of this:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"progressive-bg-image"</span> <span class="na">data-full-image-path=</span><span class="s">"&lt;full image path&gt;"</span> <span class="na">data-mini-image-path=</span><span class="s">"&lt;mini image path&gt;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;noscript&gt;&lt;img</span> <span class="na">class=</span><span class="s">"full-absolute object-fit-cover"</span> <span class="na">src=</span><span class="s">"&lt;full image path&gt;"</span><span class="nt">&gt;&lt;/noscript&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">generateProgressiveBgImgMarkup</span><span class="p">(</span><span class="nx">progressiveBgImageEl</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"fullImagePath"</span><span class="p">)</span> 
+        <span class="o">&amp;&amp;</span> <span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"miniaturePath"</span><span class="p">))</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"scrollLoaded"</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">classList</span><span class="p">(</span><span class="s2">"scroll-loaded"</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+        <span class="kd">var</span> <span class="nx">fullImagePath</span> <span class="o">=</span> <span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">dataset</span><span class="p">[</span><span class="s2">"fullImagePath"</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">miniaturePath</span> <span class="o">=</span> <span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">dataset</span><span class="p">[</span><span class="s2">"miniaturePath"</span><span class="p">];</span>
+
+        <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createDocumentFragment</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">thumbnailImg</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"img"</span><span class="p">);</span>
+        <span class="nx">thumbnailImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"hidden"</span><span class="p">);</span>
+        <span class="nx">thumbnailImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"thumbnail"</span><span class="p">);</span>
+        <span class="nx">thumbnailImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">miniaturePath</span><span class="p">;</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">thumbnailImg</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">fullBgImg</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"img"</span><span class="p">);</span>
+        <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"hidden"</span><span class="p">);</span>
+        <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-bg-image"</span><span class="p">);</span>
+        <span class="nx">fullBgImg</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">"data-src"</span><span class="p">,</span> <span class="nx">fullImagePath</span><span class="p">);</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">fullBgImg</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"canvas"</span><span class="p">);</span>
+        <span class="nx">canvas</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-absolute"</span><span class="p">);</span>
+        <span class="nx">canvas</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"progressive-img-load-canvas"</span><span class="p">);</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
+        <span class="nx">progressiveBgImageEl</span><span class="p">.</span><span class="nx">prepend</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+
+        <span class="c1">// little hack to make the css transition work with the dynamically created canvas</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">canvas</span><span class="p">).</span><span class="nx">opacity</span><span class="p">;</span> 
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>The js code above isn’t the most elegant and concise way to dynamically add elements to the DOM but it’s, as far as I know, one of the most efficient ones.</p>
+
+<p>Basically, what it does is adding the two <code class="highlighter-rouge">img</code> tags and the <code class="highlighter-rouge">canvas</code> in the <code class="highlighter-rouge">div</code> we created, and append all the necessary classes to them.</p>
+
+<p><strong>Note</strong> about the little hack: <a href="https://stackoverflow.com/questions/12088819/css-transitions-on-new-elements">it seems</a> that there’s a race between the css transition and layout completing that sometimes makes the canvas disappearing before the image had the time to show up (you can try to remove it to see how it affects the result).</p>
+
+<h1 id="img-tags">Img tags</h1>
+
+<p>As said in the introduction, there are already several libraries and articles that cover progressively loaded images. So I won’t describe it in as much details as I did for the background-images. Beside, it’s quite similar to the way background-images works.</p>
+
+<h2 id="markup-1">Markup</h2>
+
+<p>Here’s the markup I use:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"aspectRatioPlaceholder"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"aspectRatioPlaceholder-fill"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"progressiveMedia full-absolute"</span> <span class="na">data-width=</span><span class="s">"&lt;full image width&gt;"</span> <span class="na">data-height=</span><span class="s">"&lt;full image height&gt;"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"progressiveMedia-thumbnail hidden"</span> <span class="na">src=</span><span class="s">"&lt;mini image path&gt;"</span><span class="nt">/&gt;</span>
+        
+        <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"progressiveMedia-image full-absolute hidden"</span> <span class="na">data-src=</span><span class="s">"&lt;full image path&gt;"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;canvas</span> <span class="na">class=</span><span class="s">"progressiveMedia-canvas full-absolute"</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+</code></pre></div></div>
+
+<p>With its associated css:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.aspectRatioPlaceholder</span> <span class="p">{</span>
+  <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
+  <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span> <span class="nb">auto</span><span class="p">;</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">block</span><span class="p">;</span> 
+<span class="p">}</span>
+
+<span class="nc">.progressiveMedia-canvas</span> <span class="p">{</span>
+    <span class="nl">-webkit-transition</span><span class="p">:</span> <span class="n">opacity</span> <span class="m">.5s</span><span class="p">;</span>
+    <span class="nl">transition</span><span class="p">:</span> <span class="n">opacity</span> <span class="m">.5s</span><span class="p">;</span> 
+<span class="p">}</span>
+<span class="nc">.full-loaded</span> <span class="nc">.progressiveMedia-canvas</span> <span class="p">{</span>
+    <span class="nl">opacity</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>As you can see it’s pretty much the same as the one used by <a href="https://github.com/zafree/pilpil">pilpil.js</a>.</p>
+
+<p>The main difference with background images is the need to explicitly specify the size of the image. This will allow the <code class="highlighter-rouge">.aspectRatioPlaceholder-fill</code> element to take the place of the image in the layout until the image finishes loading.</p>
+
+<h2 id="javascript-1">Javascript</h2>
+
+<p>As for the background images, the js code is divided in two main functions: <code class="highlighter-rouge">initImage</code> to draw the blurred miniature in the canvas and <code class="highlighter-rouge">loadFullImage</code> to load the full size image.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">initImage</span><span class="p">(</span><span class="nx">root_el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">miniatureImg</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".progressiveMedia-thumbnail"</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".progressiveMedia-canvas"</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">placeholderFilDiv</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">previousElementSibling</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+    <span class="nx">drawMinatureForImage</span><span class="p">(</span><span class="nx">miniatureImg</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">,</span> <span class="nx">placeholderFilDiv</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">drawMinatureForImage</span><span class="p">(</span><span class="nx">miniatureImg</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">,</span> <span class="nx">placeholderFilDiv</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">fill</span> <span class="o">=</span> <span class="nx">height</span> <span class="o">/</span> <span class="nx">width</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="nx">placeholderFilDiv</span><span class="p">.</span><span class="nx">style</span> <span class="o">=</span> <span class="s1">'padding-bottom:'</span><span class="o">+</span><span class="nx">fill</span><span class="o">+</span><span class="s1">'%;'</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">smImageWidth</span> <span class="o">=</span> <span class="nx">miniatureImg</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
+    <span class="nx">smImageheight</span> <span class="o">=</span> <span class="nx">miniatureImg</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+
+    <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">smImageheight</span><span class="p">;</span>
+    <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">smImageWidth</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">img</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+    <span class="nx">img</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">canvasImage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CanvasImage</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">img</span><span class="p">);</span>
+        <span class="nx">canvasImage</span><span class="p">.</span><span class="nx">blur</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">miniatureImg</span><span class="p">.</span><span class="nx">src</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">loadFullImage</span><span class="p">(</span><span class="nx">root_el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">fullImg</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".progressiveMedia-image"</span><span class="p">),</span>
+    <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">".progressiveMedia-canvas"</span><span class="p">);</span>
+    
+    <span class="nx">fullImg</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">fullImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s2">"hidden"</span><span class="p">);</span>
+        <span class="nx">root_el</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-loaded"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">fullImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">fullImg</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">src</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>The final result is illustrated in the following jsfiddle:</p>
+
+<iframe width="100%" height="300" src="//jsfiddle.net/tsucres/1sjksa7a/embedded/" allowpaymentrequest="" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<h2 id="ameliorations-1">Ameliorations</h2>
+
+<p>The markup can easily be improved to support the previously described features.</p>
+
+<h3 id="noscript-fall-back">Noscript fall-back</h3>
+
+<p>To make the code functional even if javascript is disabled, we can add this simple <code class="highlighter-rouge">noscript</code> tag just after the <code class="highlighter-rouge">.aspectRatioPlaceholder</code>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"aspectRatioPlaceholder"</span><span class="nt">&gt;</span>
+// ...
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;noscript&gt;&lt;img</span> <span class="na">src=</span><span class="s">"&lt;full image path&gt;"</span> <span class="na">class=</span><span class="s">"full-bg-image"</span><span class="nt">&gt;&lt;/noscript&gt;</span>
+</code></pre></div></div>
+
+<h3 id="markup-generation">Markup generation</h3>
+
+<p>To simplify the integration of new images in my documents, I created the following function to dynalically generate the required markup:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="cm">/* 
+FROM (root_el): 
+&lt;img class="progressive-image" data-full-image-path="&lt;full image path&gt;" 
+        data-miniature-path="&lt;mini image path&gt;" 
+        data-full-image-height="&lt;height of full image&gt;" 
+        data-full-image-width="&lt;width of full image&gt;"&gt;
+
+TO (returned node): 
+
+&lt;div class="aspectRatioPlaceholder"&gt;
+    &lt;div class="aspectRatioPlaceholder-fill"&gt;&lt;/div&gt;
+    &lt;div class="progressiveMedia full-absolute" data-width="&lt;full image width&gt;" data-height="&lt;full image height&gt;"&gt;
+        &lt;img class="progressiveMedia-thumbnail hidden" src="&lt;mini image path&gt;"/&gt;
+        
+        &lt;img class="progressiveMedia-image full-absolute hidden" data-src="&lt;full image path&gt;" /&gt;
+        &lt;canvas class="progressiveMedia-canvas full-absolute"&gt;&lt;/canvas&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+*/</span>
+<span class="kd">function</span> <span class="nx">generateProgressiveImgMarkup</span><span class="p">(</span><span class="nx">root_el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"fullImagePath"</span><span class="p">)</span> 
+        <span class="o">&amp;&amp;</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"miniaturePath"</span><span class="p">)</span>
+        <span class="o">&amp;&amp;</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"fullImageWidth"</span><span class="p">)</span>
+        <span class="o">&amp;&amp;</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"fullImageHeight"</span><span class="p">))</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">fullImagePath</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">[</span><span class="s2">"fullImagePath"</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">miniaturePath</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">[</span><span class="s2">"miniaturePath"</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">fullImageWidth</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">[</span><span class="s2">"fullImageWidth"</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">fullImageHeight</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">[</span><span class="s2">"fullImageHeight"</span><span class="p">];</span>
+        
+        <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createDocumentFragment</span><span class="p">();</span>
+        
+        <span class="kd">var</span> <span class="nx">rootDiv</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"div"</span><span class="p">);</span>
+        <span class="nx">rootDiv</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+        <span class="nx">rootDiv</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"aspectRatioPlaceholder"</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">aspectRatioPlaceholderFill</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"div"</span><span class="p">);</span>
+        <span class="nx">aspectRatioPlaceholderFill</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"aspectRatioPlaceholder-fill"</span><span class="p">);</span>
+        <span class="nx">rootDiv</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">aspectRatioPlaceholderFill</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">progressiveMedia</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"div"</span><span class="p">);</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"progressiveMedia"</span><span class="p">);</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-absolute"</span><span class="p">);</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">"data-width"</span><span class="p">,</span> <span class="nx">fullImageWidth</span><span class="p">);</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">"data-height"</span><span class="p">,</span> <span class="nx">fullImageHeight</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">root_el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">"scrollLoaded"</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"scroll-loaded"</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">rootDiv</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">progressiveMedia</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">thumbnailImg</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"img"</span><span class="p">);</span>
+        <span class="nx">thumbnailImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"progressiveMedia-thumbnail"</span><span class="p">);</span>
+        <span class="nx">thumbnailImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"hidden"</span><span class="p">);</span>
+        <span class="nx">thumbnailImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">miniaturePath</span><span class="p">;</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">thumbnailImg</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">fullImg</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"img"</span><span class="p">);</span>
+        <span class="nx">fullImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"progressiveMedia-image"</span><span class="p">);</span>
+        <span class="nx">fullImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"hidden"</span><span class="p">);</span>
+        <span class="nx">fullImg</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-absolute"</span><span class="p">);</span>
+        <span class="nx">fullImg</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">"data-src"</span><span class="p">,</span> <span class="nx">fullImagePath</span><span class="p">);</span>
+        <span class="nx">fullImg</span><span class="p">.</span><span class="nx">alt</span> <span class="o">=</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">alt</span><span class="p">;</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">fullImg</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"canvas"</span><span class="p">);</span>
+        <span class="nx">canvas</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"progressiveMedia-canvas"</span><span class="p">);</span>
+        <span class="nx">canvas</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">"full-absolute"</span><span class="p">);</span>
+        <span class="nx">progressiveMedia</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
+
+        <span class="nx">c</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">rootDiv</span><span class="p">)</span>
+
+        <span class="nx">root_el</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">root_el</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">);</span>
+        <span class="nx">root_el</span><span class="p">.</span><span class="nx">remove</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="nx">progressiveMedia</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>I wrapped the whole code in a portable library that I randomly and unoriginally called BluePil.js. It basically does everything described in this article, but with support for more browsers and with several additional features. Check out its <a href="https://github.com/tsucres/BluePil.js">github page</a> and its <a href="https://tsucres.github.io/BluePil.js/">demo page</a> for more info.</p>
+
+<p>There are also several other libraries that do a similar job:</p>
+
+<ul>
+  <li><a href="https://github.com/zafree/pilpil">pilpil.js</a>: lightweight, vanilla js, basically a simpler version of what is described in this article.</li>
+  <li><a href="https://github.com/gilbitron/Pil">pil.js</a>: very similar to pilpil.js, with simpler markup.</li>
+  <li><a href="http://dinbror.dk/blazy/">beLazy.js</a>: lightweight, highly customisable, vanilla js, but less straightforward to implement.</li>
+  <li><a href="https://github.com/craigbuckler/progressive-image.js">progressive-image.js</a>: lightweight, support for src-set,</li>
+  <li>jquery modules</li>
+</ul>
+
+<p>For any questions/remark, please comment on the <a href="...">medium page</a></p>
+
+
+                </div>  
+
+                <!--- DIVIDING LINE -->
+                <hr>
+        
+                <!-- POST TAGS -->
+                <div class="inline-tags">
+                    <span>
+                        
+                            <a href="/tags/#Js">#Js</a>
+                        
+                    </span>
+                </div>
+              
+                <br>
+                
+                <!-- POST DATE -->
+                <div class="post-date">
+                    DECEMBER 6, 2017
+                </div>
+            </div>
+        </article>
+    </div>
+
+
+    <!-- FOOTER -->  
+<footer>  
+    <div class="footer-wrapper">
+        <footer role="contentinfo">
+            <span>
+    &copy; 2018 Stéphane Sercu.<br>Hosted on <a target="_blank" href="https://github.com/tsucres/">github</a>.
+</span>
+
+        </footer>
+    </div>   
+</footer>  
+
+  
+  <script type="text/javascript" src="/assets/js/bluepil.js"></script>  
+  <script type="text/javascript">
+  	PIL.go();
+  </script>
+</body>
+
+
+  
+</html>
