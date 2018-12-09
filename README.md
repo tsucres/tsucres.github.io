@@ -1,6 +1,6 @@
 ## Portfolio
 
-[![screenshot](screenshot.png)](http://tsucres.me)
+[![screenshot](screenshot-min.png)](http://tsucres.me)
 
 
 This repo hosts my portfolio. It's a jekyll based static website accessible [here](http://www.tsucres.me).
