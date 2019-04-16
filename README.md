@@ -58,3 +58,17 @@ jekyll serve
 
 The website is hosted on github, on the `master` branch of this repo. The repo is organised according to the method described [here](https://drewsilcock.co.uk/custom-jekyll-plugins).
 
+In summary, 2 git repos: 1 in root, 1 in \_site. 
+
+- To push sources, as usual, from root: `add`, `commit` and `push`
+- To update the generated site: 
+```
+jekyll build
+cd _site
+git add .
+git commit -m "Commit msg"
+git push origin master
+cd ..
+```
+
+
