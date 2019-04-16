@@ -6,9 +6,9 @@
    
 <head>
   <meta charset="utf-8">
-<title>HNBuddy - Hackernews client for iOS &#8211; Stéphane Sercu</title>
-<meta name="description" content="HNBuddy is an Hackernews client for iOS written in Swift. It's available on the appstore and even has its own landing page!">
-<meta name="keywords" content="Swift, iOS, Web, LTS">
+<title>30 FPS Body Pose Estimation on mobile using a spatio-temporal CNN-based model on RGB and depth (ToF) images &#8211; Stéphane Sercu</title>
+<meta name="description" content="A preview of the capabilities of my models for Human Pose Estimation. The models are based on ConvLSTMs and ConvGRUs. They are running in real-time on mobile devices.">
+<meta name="keywords" content="CV, DeepLearning, HPE, Tensorflow, Python">
 
 
 <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
@@ -23,16 +23,16 @@
 <!-- Open Graph -->
 <meta property="og:locale" content="en_US">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HNBuddy - Hackernews client for iOS">
-<meta property="og:description" content="HNBuddy is an Hackernews client for iOS written in Swift. It's available on the appstore and even has its own landing page!">
-<meta property="og:url" content="/2017-11-18/HNBuddy.html">
+<meta property="og:title" content="30 FPS Body Pose Estimation on mobile using a spatio-temporal CNN-based model on RGB and depth (ToF) images">
+<meta property="og:description" content="A preview of the capabilities of my models for Human Pose Estimation. The models are based on ConvLSTMs and ConvGRUs. They are running in real-time on mobile devices.">
+<meta property="og:url" content="/2019-03-18/30FPS-Body-Pose-Estimation-using-spatio-temporal-neural-networks.html">
 <meta property="og:site_name" content="Stéphane Sercu">
 
 
 
 
 
-<link rel="canonical" href="/2017-11-18/HNBuddy.html">
+<link rel="canonical" href="/2019-03-18/30FPS-Body-Pose-Estimation-using-spatio-temporal-neural-networks.html">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -97,23 +97,13 @@
 
                 <figure class="feature-image">
                 
-                    <img class="progressive-image" data-full-image-path="/images/2017-11-18/HNBuddy_feature.png" 
-                        data-miniature-path="/images/2017-11-18/HNBuddy_feature_mini.png" 
-                        data-full-image-height="624" 
-                        data-full-image-width="1059">
-                    <noscript><img src="/images/2017-11-18/HNBuddy_feature.png" class="full-bg-image"></noscript>
-                    
-                
 
                 
                     
-                        <div class="external-links">
+                        <div class="external-links alone">
                             
-                              <a href="https://github.com/tsucres/HNBuddyLandingPage/"><img src="/images/github_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'"> tsucres/HNBuddyLandingPage</a>
+                              <a href="https://github.com/tsucres/BodyPoseEstimation/"><img src="/images/github_logo.svg" onerror="this.onerror=null; this.src='/images/github_logo.png'"> tsucres/BodyPoseEstimation</a>
                             
-                            
-                                
-                                  <a href="http://hnbuddy.io/"><img src="/images/ext_link_icon.svg" onerror="this.onerror=null; this.src='/images/ext_link_icon.png'">hnbuddy.io</a>
                             
         
                         </div>
@@ -131,42 +121,32 @@
 
                 <!-- MAIN -->
                 <h1 class="entry-title">
-                    <a>HNBuddy - Hackernews client for iOS</a>
+                    <a>30 FPS Body Pose Estimation on mobile using a spatio-temporal CNN-based model on RGB and depth (ToF) images</a>
                 </h1>
                 
                 <!-- POST CONTENT -->
                 <div class="entry-content">
-                    <p>HNBuddy is an Hackernews client for iOS written in Swift.</p>
+                    <p>This is a preview of the results (description of the architectures + code are coming soon). The footages come from the NTU RGB+D Action Recognition Dataset [1].</p>
 
-<p>The idea came from a combination of will to build an actual, finished, usable application (in opposition to the personal, side projects that I’m used to abandon as soon as their teaching/learning purpose is achieved) and the will to experiment with and learn Swift and iOS programming through a real project.</p>
+<p>(The gifs link to a video of better quality)</p>
 
-<div style="text-align: center;">
-<img src="http://www.hnbuddy.io/img/appstore/reader.jpg" data-rjs="3" style="max-width: 30%;" />
-<img src="http://www.hnbuddy.io/img/appstore/lists.jpg" data-rjs="3" style="max-width: 30%; margin-left: 3%;" />
-<img src="http://www.hnbuddy.io/img/appstore/discussion.jpg" data-rjs="3" style="max-width: 30%; margin-left: 3%;" />
-</div>
+<p><a href="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/victory_rgb_gru.mov"><img src="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/victory_rgb_gru.gif" alt="" /></a></p>
 
-<h3 id="modularity">Modularity</h3>
+<p><a href="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/victory_rgb_gru2.mov"><img src="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/victory_rgb_gru2.gif" alt="" /></a></p>
 
-<p>To enhance the modularity and the testability of the app, I broke down some of its functionalities into separate modules:</p>
+<h4 id="convlstm-model-on-rgb">ConvLSTM model on RGB</h4>
 
-<ul>
-  <li>The whole network/client part was developed separately into the <a href="...">HNScraper</a> module.</li>
-  <li>The UI of the user page is based on a <a href="...">HeaderTabScrollView</a></li>
-  <li>The comment section uses the <a href="...">SwiftComments</a> module.</li>
-  <li>The app also uses the SwiftyMercuryReady component to display the articles. This allow the user to enhance the readability of the article and to have control over the font size &amp; style and the theme (dark &amp; light).</li>
-</ul>
+<p><a href="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/shoeoff_rgb_lstm.mov"><img src="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/shoeoff_rgb_lstm.gif" alt="" /></a></p>
 
-<h3 id="landing-page">Landing page</h3>
+<h4 id="convgru-model-on-depth">ConvGRU model on depth</h4>
 
-<p>The app has its landing page hosted on <a href="...">github</a>. It’s also available on the <a href="...">app store</a>.</p>
+<p><a href="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/hat_depth_gru.mov"><img src="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/hat_depth_gru.gif" alt="" /></a></p>
 
-<p>The result has become my default way to browse hackernews.</p>
+<p><a href="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/glasseson_depth_gru.mov"><img src="https://github.com/tsucres/BodyPoseEstimation/raw/90e778093ebd0b775c72254d0e09723c02b72990/assets/glasseson_depth_gru.gif" alt="" /></a></p>
 
-<div style="text-align: center;">
-	<img src="http://www.hnbuddy.io/img/appstore/home1.jpg" data-rjs="3" style="max-width: 40%" />
-	<img src="http://www.hnbuddy.io/img/appstore/home2.jpg" data-rjs="3" style="margin-left: 30px; max-width: 40%" />
-</div>
+<h3 id="references">References</h3>
+
+<p>[1] Shahroudy, A., Liu, J., Ng, T.-T., &amp; Wang, G. (2016). NTU RGB+D: A Large Scale Dataset for 3D Human Activity Analysis. In The IEEE Conference on Computer Vision and Pattern Recognition (CVPR).</p>
 
                 </div>  
 
@@ -177,13 +157,15 @@
                 <div class="inline-tags">
                     <span>
                         
-                            <a href="/tags/#Swift">#Swift</a>
+                            <a href="/tags/#CV">#CV</a>
                         
-                            <a href="/tags/#iOS">#iOS</a>
+                            <a href="/tags/#DeepLearning">#DeepLearning</a>
                         
-                            <a href="/tags/#Web">#Web</a>
+                            <a href="/tags/#HPE">#HPE</a>
                         
-                            <a href="/tags/#LTS">#LTS</a>
+                            <a href="/tags/#Tensorflow">#Tensorflow</a>
+                        
+                            <a href="/tags/#Python">#Python</a>
                         
                     </span>
                 </div>
@@ -192,7 +174,7 @@
                 
                 <!-- POST DATE -->
                 <div class="post-date">
-                    NOVEMBER 18, 2017
+                    MARCH 18, 2019
                 </div>
             </div>
         </article>
