@@ -7,7 +7,7 @@ date-string: DECEMBER 20, 2016
 image:
   feature: 2016-12-20/HPFolding_feature.png
 external-links:
-  github: tsucres/HPFolding
+  github: tsucres/HPFoldingProblem
 ---
 
 This project started as an assignment for the university. The task was to implement, in C++, a backtracking algorithm that solves the protein folding problem in the 2D HP model. 
